@@ -43,7 +43,7 @@ ui <-  page_navbar(
         full_screen = TRUE,
         card_header("Visualization", class = 'bg-dark'),
         card_footer(
-          layout_column_wrap(width = 0.5,
+          fluidRow(
                              selectizeInput("genes",
                                             "Gene(s): ",
                                             choices = NULL,
@@ -76,7 +76,8 @@ ui <-  page_navbar(
            card_header("Grouping Table (select rows to filter plot)", class = 'bg-dark'),
            card_body_fill(
              DT::dataTableOutput("table",width = "85%",fill = FALSE)
-           )
+           ),
+           actionButton('clear_colData_row_selections', 'Clear Rows')
       )
     )
   )
