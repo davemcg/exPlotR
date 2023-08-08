@@ -32,13 +32,17 @@
 #' }
 #'
 
-geyser <- function(rse, app_name = "geyser", ...) {
+geyser <- function(rse, 
+                   app_name = "geyser",
+                   primary_color = "#3A5836",
+                   secondary_color = "#d5673e") {
 
   addResourcePath('assets', system.file('assets', package='geyser'))
   
   ui <-  page_navbar(
     title = app_name,
-    theme = theme_ui(),
+    theme = theme_ui(primary_color = primary_color, 
+                     secondary_color = secondary_color),
     tags$style(HTML('table.dataTable tr.active td, table.dataTable tr.active 
                     {background-color: #3A5836 !important;}')),
     tags$style(HTML('table.dataTable tr.selected td, table.dataTable td.selected 
@@ -132,7 +136,6 @@ geyser <- function(rse, app_name = "geyser", ...) {
   rse_name <- deparse(substitute(rse))
   
   server <- function(input, output, session) {
-    cat(getwd())
     # select sample columns to group on -----
     updateSelectizeInput(session, 'groupings',
                          choices = colnames(colData(get(rse_name))) %>% 
@@ -214,6 +217,8 @@ geyser <- function(rse, app_name = "geyser", ...) {
   # variables for server.R
   server_env$rse <- rse
   server_env$app_name <- app_name
+  server_env$primary_color <- primary_color
+  server_env$secondary_coor <- secondary_color
   
   app <- shinyApp(ui, server)
   #runApp(app, ...)

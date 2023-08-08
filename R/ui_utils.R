@@ -1,16 +1,17 @@
-theme_ui <- function(){
+# primary = "#3A5836", secondary = "#d5673e"
+theme_ui <- function(primary_color, secondary_color){
   bs_theme(version =  5,
-           primary = "#3A5836",
-           secondary = "#d5673e",
+           primary = primary_color,
+           secondary = secondary_color,
            font_scale = 0.8,
            bootswatch = 'united',
-           "accordion-button-active-bg" = "#3A5836",
-           "accordion-button-bg" = "#3A5836",
+           "accordion-button-active-bg" = primary_color,
+           "accordion-button-bg" = primary_color,
            "accordion-button-color" = "white",
            "accordion-button-active-color" = "white",
            "accordion-icon-color" = "white",
            "accordion-icon-active-color" = "white",
-           "dark" = "#3A5836")
+           "dark" = primary_color)
 }
 
 quick_start_ui <- function(){
