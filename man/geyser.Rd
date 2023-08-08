@@ -4,17 +4,24 @@
 \alias{geyser}
 \title{geyser}
 \usage{
-geyser(rse, app_name = "geyser", ...)
+geyser(
+  rse,
+  app_name = "geyser",
+  primary_color = "#3A5836",
+  secondary_color = "#d5673e"
+)
 }
 \arguments{
 \item{rse}{SummarizedExperiment object}
 
 \item{app_name}{Title name that goes on the top left of the Shiny app}
 
-\item{...}{More arguments for \code{\link[shiny:runApp]{shiny::runApp()}}.}
+\item{primary_color}{The title bar color}
+
+\item{secondary_color}{The plot action button color}
 }
 \description{
-Run shiny app to use SummarizedExperiment object to display RNAseq data
+Run shiny app to use SummarizedExperiment object to display genomics data
 }
 \details{
 Shiny app uses the rowData rownames to define the genes. The colData field is made

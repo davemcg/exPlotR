@@ -7,7 +7,9 @@
 #' @import SummarizedExperiment
 #' @import ggplot2
 #' @import ggbeeswarm
-#'
+#' @import dplyr
+#' @importFrom tidyr pivot_longer pivot_wider
+#' 
 #' @param input From ui.R
 #' @param rse_name Name of the rse object
 #' @param slot which slot to pull the count data from the rse assay
@@ -30,7 +32,7 @@ exp_plot <- function(input, rse_name, slot){
   
   genes <- input$genes
   groupings <- input$groupings
-
+  cat(class(groupings))
   if (length(genes) < 1 || length(groupings) < 1){
     showModal(modalDialog(title = "Box Plot Error",
                           "Have you specified at least one grouping and one gene?",
@@ -41,10 +43,12 @@ exp_plot <- function(input, rse_name, slot){
 
   # pull gene counts and left_join with colData
   pdata <- assay(get(rse_name),  input$slot)[genes, ,drop = FALSE] %>%
-    as_tibble(rownames = 'Gene') %>%
+    data.frame() %>% 
+    tibble::rownames_to_column('Gene') %>% 
     pivot_longer(-Gene, values_to = 'counts', names_to = 'sample_unique_id') %>%
     left_join(colData(get(rse_name)) %>%
-                as_tibble(rownames = 'sample_unique_id') %>%
+                data.frame() %>% 
+                tibble::rownames_to_column('sample_unique_id') %>% 
                 mutate(rowid = row_number()),
               by = 'sample_unique_id')
   if (length(input$table_rows_selected)){
@@ -62,7 +66,7 @@ exp_plot <- function(input, rse_name, slot){
   output <- list()
   pfdata <- pfdata %>%
     # make custom column with user selected groupings of columns
-    unite("group", all_of(groupings), remove = FALSE, sep = " | ")
+    tidyr::unite("group", tidyr::all_of(groupings), remove = FALSE, sep = " | ")
   output$plot <- pfdata %>%
     ggplot(aes(x=group,y=counts)) +
     geom_boxplot() +

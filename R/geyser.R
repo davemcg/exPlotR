@@ -6,17 +6,17 @@
 #' @import shiny
 #' @import SummarizedExperiment
 #' @import bslib
-#' @import poorman
+#' @import dplyr
 #' @import ggplot2
 #' @import ggbeeswarm 
-#' @import tibble
 #' @import ComplexHeatmap
 #' @import htmltools
 #'
 #'
 #' @param rse SummarizedExperiment object
 #' @param app_name Title name that goes on the top left of the Shiny app
-#' @param ... More arguments for [shiny::runApp()].
+#' @param primary_color The title bar color
+#' @param secondary_color The plot action button color
 #'
 #' @details
 #'
@@ -36,7 +36,7 @@ geyser <- function(rse,
                    app_name = "geyser",
                    primary_color = "#3A5836",
                    secondary_color = "#d5673e") {
-
+  
   addResourcePath('assets', system.file('assets', package='geyser'))
   
   ui <-  page_navbar(
@@ -130,7 +130,7 @@ geyser <- function(rse,
     )
   )
   
-
+  
   
   # this argument yanked via the R/geyser.R function
   rse_name <- deparse(substitute(rse))
@@ -179,7 +179,8 @@ geyser <- function(rse,
     # sample data table -----
     output$table <- DT::renderDataTable(
       colData(get(rse_name)) %>%
-        dplyr::as_tibble(rownames = 'rse_sample_id') %>%
+        data.frame() %>% 
+        rownames_to_column('rse_sample_id') %>% 
         dplyr::select('rse_sample_id', dplyr::any_of(input$groupings)) %>%
         DT::datatable(rownames= FALSE,
                       options = list(autoWidth = TRUE,
@@ -198,7 +199,8 @@ geyser <- function(rse,
     # sample data table full -----
     output$table_full <- DT::renderDataTable(
       colData(get(rse_name)) %>%
-        dplyr::as_tibble() %>%
+        data.frame() %>% 
+        tibble::rownames_to_column('rse_sample_id') %>% 
         DT::datatable(rownames= FALSE,
                       options = list(autoWidth = TRUE,
                                      pageLength = 25),
@@ -221,6 +223,5 @@ geyser <- function(rse,
   server_env$secondary_coor <- secondary_color
   
   app <- shinyApp(ui, server)
-  #runApp(app, ...)
   return(app)
 }
