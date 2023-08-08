@@ -5,9 +5,6 @@
 #' @keywords internal
 #'
 #' @import SummarizedExperiment
-#' @import tidyr
-#' @import dplyr
-#' @import tibble
 #' @import ComplexHeatmap
 #'
 #'
@@ -29,6 +26,7 @@
 #'
 
 hm_plot <- function(input, rse_name, slot){
+  Gene <- rowid <- sample_unique_id <- counts <- group <- NULL
   genes <- input$genes
   groupings <- input$groupings
 
@@ -74,15 +72,16 @@ hm_plot <- function(input, rse_name, slot){
   pfdf <- pfdf[,-1]
   hm_data <- t(scale(t(pfdf[,pfdata$sample_unique_id %>% unique()])))
   # row clustering fails if there are zero count rows
+  row_clustering <- input$row_clust
   if (min(rowSums(hm_data)) == 0){
-    input$row_clust <- FALSE
+    row_clustering <- FALSE
   }
   output$plot <- Heatmap(hm_data,
                          column_split = pfdata %>% filter(Gene == genes[1]) %>% pull(group),
                          column_title_rot = 90,
                          column_labels = col_labels,
                          cluster_columns = input$col_clust,
-                         cluster_rows = input$row_clust,
+                         cluster_rows = row_clustering,
                          name = lab_text)
   output$grouping_length <- nrow(pfdata) + (nchar(pfdata$group) %>% max()) + (nchar(pfdf) %>% max())
   output

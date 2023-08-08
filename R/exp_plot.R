@@ -5,11 +5,8 @@
 #' @keywords internal
 #'
 #' @import SummarizedExperiment
-#' @import tidyr
-#' @import dplyr
 #' @import ggplot2
 #' @import ggbeeswarm
-#' @import tibble
 #'
 #' @param input From ui.R
 #' @param rse_name Name of the rse object
@@ -29,6 +26,8 @@
 #'
 
 exp_plot <- function(input, rse_name, slot){
+  Gene <- rowid <- group <- counts <- NULL
+  
   genes <- input$genes
   groupings <- input$groupings
 

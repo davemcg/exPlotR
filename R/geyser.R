@@ -1,13 +1,12 @@
 #' @title geyser
 #'
-#' @description Run shiny app to use SummarizedExperiment object to display RNAseq data
+#' @description Run shiny app to use SummarizedExperiment object to display genomics data
 #'
 #' @export
 #' @import shiny
 #' @import SummarizedExperiment
 #' @import bslib
-#' @import tidyr
-#' @import dplyr
+#' @import poorman
 #' @import ggplot2
 #' @import ggbeeswarm 
 #' @import tibble
@@ -34,17 +33,189 @@
 #'
 
 geyser <- function(rse, app_name = "geyser", ...) {
-  file_path <- system.file("app/myapp.R", package = "geyser")
-  #file_path <- "inst/app/myapp.R"
-  if (!nzchar(file_path)) stop("Shiny app not found")
-  ui <- server <- NULL # avoid NOTE about undefined globals
-  source(file_path, local = TRUE, chdir = TRUE)
-  server_env <- environment(server)
 
+  addResourcePath('assets', system.file('assets', package='geyser'))
+  
+  ui <-  page_navbar(
+    title = app_name,
+    theme = theme_ui(),
+    tags$style(HTML('table.dataTable tr.active td, table.dataTable tr.active 
+                    {background-color: #3A5836 !important;}')),
+    tags$style(HTML('table.dataTable tr.selected td, table.dataTable td.selected 
+                    {background-color: pink !important;}')),
+    selected = "Full Sample Metadata",
+    collapsible = TRUE,
+    nav_panel(
+      title = "Full Sample Metadata",
+      card(
+        full_screen = TRUE,
+        card_header("colData", class = 'bg-dark'),
+        card_body(
+          DT::dataTableOutput("table_full", width = "85%",fill = FALSE)
+        )
+      )
+    ),
+    nav_panel(
+      title = "Plotting",
+      page_fluid(
+        layout_sidebar(
+          height = '100%',
+          sidebar = sidebar(
+            accordion(
+              multiple = TRUE,
+              accordion_panel(
+                "Plot Parameters",
+                selectizeInput("groupings",
+                               "Sample Grouping(s):",
+                               choices = NULL,
+                               multiple = TRUE,
+                ),
+                selectizeInput("genes",
+                               "Gene(s): ",
+                               choices = NULL,
+                               multiple = TRUE),
+                selectizeInput("slot",
+                               "Assay Type:",
+                               choices = NULL,
+                               multiple = FALSE
+                ),
+                layout_column_wrap(width = 0.5, 
+                                   checkboxInput("expression_scale", 
+                                                 label = 'log2(expression)', 
+                                                 value = TRUE)),
+              ),
+              accordion_panel("Sample Filtering",
+                              card(full_screen = TRUE,
+                                   DT::dataTableOutput("table",width = "105%",
+                                                       fill = FALSE),
+                                   actionButton('clear_colData_row_selections', 
+                                                'Clear Rows'))
+              )
+            ),
+            width = '40%'),
+          navset_card_tab(
+            full_screen = TRUE,
+            nav_panel("Box Plot",
+                      actionButton('exp_plot_button','Draw Box Plot'),
+                      plotOutput("exp_plot",height = '100%')
+            ),
+            nav_panel("Heatmap",
+                      layout_columns(fill = FALSE,
+                                     checkboxInput("col_clust", 
+                                                   label = "Cluster Columns", 
+                                                   value = TRUE),
+                                     checkboxInput("row_clust", 
+                                                   label = "Cluster Rows", 
+                                                   value = TRUE)),
+                      actionButton('hm_plot_button','Draw Heatmap'),
+                      plotOutput("hm_plot",height = '100%')
+            )
+          )
+        )
+      )
+    ),
+    nav_spacer(),
+    nav_menu(
+      title = "Info",
+      align = "right",
+      quick_start_ui(),
+      overview_ui(),
+      nav_item(tags$a("Code Source (external link)", 
+                      href = "https://github.com/davemcg/geyser", 
+                      target = "_blank"))
+    )
+  )
+  
+
+  
+  # this argument yanked via the R/geyser.R function
+  rse_name <- deparse(substitute(rse))
+  
+  server <- function(input, output, session) {
+    cat(getwd())
+    # select sample columns to group on -----
+    updateSelectizeInput(session, 'groupings',
+                         choices = colnames(colData(get(rse_name))) %>% 
+                           sort(),
+                         selected = '',
+                         server = TRUE)
+    # select genes ----
+    updateSelectizeInput(session, 'genes',
+                         choices = rownames(get(rse_name)) %>% sort(),
+                         selected = '',
+                         server = TRUE)
+    # select assay slot (usually counts) ----
+    updateSelectizeInput(session, 'slot',
+                         choices = assays(get(rse_name)) %>% 
+                           names() %>% sort(),
+                         selected = if ('counts' %in% 
+                                        names(assays(get(rse_name)))){'counts'} 
+                         else {names(assays(get(rse_name)))[1]},
+                         server = TRUE)
+    # expression plot ----
+    # R/exp_plot.R
+    exp_plot_reactive <- eventReactive(input$exp_plot_button, {
+      exp_plot(input, rse_name)
+    })
+    output$exp_plot <- renderPlot({
+      exp_plot_reactive()$plot},
+      height = eventReactive(input$exp_plot_button,
+                             {max(600, 20 * length(input$genes) * exp_plot_reactive()$grouping_length)})
+    )
+    # hm plot -----
+    # R/heatmap.R
+    hm_plot_reactive <- eventReactive(input$hm_plot_button, {
+      hm_plot(input, rse_name)
+    })
+    output$hm_plot <- renderPlot({
+      ComplexHeatmap::draw(hm_plot_reactive()$plot)},
+      height = eventReactive(input$hm_plot_button,
+                             {max(400, 0.7 * hm_plot_reactive()$grouping_length)})
+    )
+    
+    # sample data table -----
+    output$table <- DT::renderDataTable(
+      colData(get(rse_name)) %>%
+        dplyr::as_tibble(rownames = 'rse_sample_id') %>%
+        dplyr::select('rse_sample_id', dplyr::any_of(input$groupings)) %>%
+        DT::datatable(rownames= FALSE,
+                      options = list(autoWidth = TRUE,
+                                     pageLength = 15,
+                                     dom = 'tp'),
+                      filter = list(position = 'top', clear = FALSE)),
+      server = TRUE
+    )
+    ## proxy to clear row selection -----
+    ## https://yihui.shinyapps.io/DT-proxy/
+    proxy = DT::dataTableProxy('table')
+    observeEvent(input$clear_colData_row_selections, {
+      proxy %>% DT::selectRows(NULL)
+    })
+    
+    # sample data table full -----
+    output$table_full <- DT::renderDataTable(
+      colData(get(rse_name)) %>%
+        dplyr::as_tibble() %>%
+        DT::datatable(rownames= FALSE,
+                      options = list(autoWidth = TRUE,
+                                     pageLength = 25),
+                      filter = list(position = 'top', clear = FALSE),
+                      selection = 'none'
+        ),
+      server = TRUE
+    )
+    session$onSessionEnded(function() {
+      stopApp()
+    })
+  }
+  
+  server_env <- environment(server)
+  
   # variables for server.R
   server_env$rse <- rse
   server_env$app_name <- app_name
-
-  app <- shiny::shinyApp(ui, server)
-  shiny::runApp(app, ...)
+  
+  app <- shinyApp(ui, server)
+  #runApp(app, ...)
+  return(app)
 }

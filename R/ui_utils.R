@@ -1,41 +1,46 @@
 theme_ui <- function(){
-  bslib::bs_theme(version =  5,
-                  primary = "#3A5836",
-                  secondary = "#d5673e",
-                  font_scale = 0.8,
-                  bootswatch = 'united',
-                  "accordion-button-active-bg" = "#3A5836",
-                  "accordion-button-bg" = "#3A5836",
-                  "accordion-button-color" = "white",
-                  "accordion-button-active-color" = "white",
-                  "accordion-icon-color" = "white",
-                  "accordion-icon-active-color" = "white",
-                  "dark" = "#3A5836")
+  bs_theme(version =  5,
+           primary = "#3A5836",
+           secondary = "#d5673e",
+           font_scale = 0.8,
+           bootswatch = 'united',
+           "accordion-button-active-bg" = "#3A5836",
+           "accordion-button-bg" = "#3A5836",
+           "accordion-button-color" = "white",
+           "accordion-button-active-color" = "white",
+           "accordion-icon-color" = "white",
+           "accordion-icon-active-color" = "white",
+           "dark" = "#3A5836")
 }
 
 quick_start_ui <- function(){
   nav_panel("Quick Start",
             page_fluid(
-              tags$code("# If needed: BiocManager::install(\"recount3\")"), br(),
-              tags$code("library(recount3)"), br(),
-              tags$code("library(geyser)"), br(),
-              tags$code("library(dplyr)"), br(),
-              tags$code("human_projects <- available_projects()"), br(),
-              tags$code("proj_info <- subset("), br(),
-              tags$code(HTML('&nbsp;'), "  human_projects,"), br(),
-              tags$code(HTML('&nbsp;'), "  project == \"SRP107937\" & project_type == \"data_sources\""), br(),
-              tags$code(")"), br(),
-              tags$code("rse_SRP107937 <- create_rse(proj_info)"), br(),
-              tags$code("assay(rse_SRP107937, \"counts\") <- transform_counts(rse_SRP107937)"), br(),
-              tags$code("# first tweak that glues the gene name onto the gene id in the row names"), br(),
-              tags$code("rownames(rse_SRP107937) <- paste0(rowData(rse_SRP107937)$gene_name, ' (', row.names(rse_SRP107937), ')')"), br(),
-              tags$code("# creates two new metadataa fields "), br(),
-              tags$code("colData(rse_SRP107937)$tissue <- colData(rse_SRP107937)$sra.sample_title %>% stringr::str_extract(.,'PRC|PR')"), br(),
-              tags$code("colData(rse_SRP107937)$disease <- colData(rse_SRP107937)$sra.sample_title %>% stringr::str_extract(.,'AMD|Normal')"), br(),
-              tags$code("geyser::geyser(rse_SRP107937, \" geyser: SRP107937\")"), br(), br(),
-              tags$iframe(width="800",
-                          height="506",
-                          src="assets/geyser_example.mp4", frameborder="0", allow="accelerometer; autoplay; gyroscope; picture-in-picture"))
+              "Code that you can paste into your R console that does the following: ", br(),
+              "1. Load recount3 and download project SRP107937", br(),
+              "2. Extract the raw counts", br(),
+              "3. Does some light metadata tweaking and loads the RSE object into geyser", br(), br(),
+              tags$pre("# If needed: BiocManager::install(\"recount3\")
+library(recount3)
+library(geyser)
+library(dplyr)
+human_projects <- available_projects())
+proj_info <- subset( 
+  human_projects 
+  project == \"SRP107937\" & project_type == \"data_sources\" 
+)
+rse_SRP107937 <- create_rse(proj_info
+assay(rse_SRP107937, \"counts\") <- transform_counts(rse_SRP107937)
+# first tweak that glues the gene name onto the gene id in the row names
+rownames(rse_SRP107937) <- paste0(rowData(rse_SRP107937)$gene_name, ' (', row.names(rse_SRP107937), ')')
+# creates two new metadata fields 
+colData(rse_SRP107937)$tissue <- colData(rse_SRP107937)$sra.sample_title %>% stringr::str_extract(.,'PRC|PR')
+colData(rse_SRP107937)$disease <- colData(rse_SRP107937)$sra.sample_title %>% stringr::str_extract(.,'AMD|Normal')
+geyser(rse_SRP107937, \" geyser: SRP107937\")"), br(),
+            #           tags$iframe(width="800",
+            #                       height="506",
+            #                       src="https://rawcdn.githack.com/davemcg/geyser/5e89c4ac27e786eb80ec1baa0bf0ab1f90fb6f01/inst/assets/geyser_example.mp4", frameborder="0", allow="accelerometer; autoplay; gyroscope; picture-in-picture"))
+            )
   )
 }
 
