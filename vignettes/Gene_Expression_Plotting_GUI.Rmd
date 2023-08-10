@@ -1,6 +1,11 @@
 ---
 title: "Gene Expression displaY of SummarizedExperiment in R"
 output: rmarkdown::html_vignette
+author: 
+  - David McGaughey
+   affiliation: 
+   - National Eye Institute, National Institutes of Health
+date: "`r Sys.Date() `"
 vignette: >
   %\VignetteIndexEntry{Gene_Expression_Plotting_GUI}
   %\VignetteEngine{knitr::rmarkdown}
@@ -15,8 +20,21 @@ knitr::opts_chunk$set(
 ```
 
 # Install
-```{r install}
+Commented out for now as it is not on Bioconductor
+```{r install, eval = FALSE}
+# if (!requireNamespace("BiocManager", quietly=TRUE))
+#     install.packages("BiocManager")
+# BiocManager::install("geyser")
 
+```
+
+# Development Version
+The latest version can be installed via [github](www.github.com/davemcg/geyser)
+
+```{r install github, eval = FALSE}
+if (!requireNamespace("remotes", quietly=TRUE))
+     install.packages("remotes")
+remotes::install_github("davemcg/geyser")
 ```
 
 # Load Test Data
@@ -80,7 +98,7 @@ If you want to reset the custom sample filtering, just click the "Clear Rows" bu
 </p>
 
 
-# How to use [recount3](https://rna.recount.bio) to quickly grab a pre-processed dataset
+# How to use [recount3](https://rna.recount.bio) to display a pre-processed dataset
 
 We also do some light tweaking of the metadata to make human useable splits
 ```{r}
@@ -105,6 +123,51 @@ if (interactive()){
 }
 ```
 
+# How to turn a count matrix into a SummarizedExperiment
+
+The key step is to get matched metadata (where each row corresponds to each column of the count matrix).
+
+```{r count to se}
+library(SummarizedExperiment)
+counts <- matrix(runif(10 * 6, 1, 1e4), 10)
+row.names(counts) <- paste0('gene', seq(1,10))
+colnames(counts) <- LETTERS[1:6]
+
+sample_info <- data.frame(Condition = c(rep("Unicorn", 3),
+                                       rep("Horse", 3)),
+                                       row.names = LETTERS[1:6])
+                         
+se_object <- SummarizedExperiment(assays=list(counts = counts), 
+                                  colData = sample_info)
+
+if (interactive()){
+  geyser(se_object, "Magical Creatures")
+}
+```
+
+# How to turn a DESeqDataSet into a SummarizedExperiment
+
+This example is taken from the [DESeq2 guide](https://bioconductor.org/packages/release/bioc/html/DESeq2.html). A `DESeqDataSet` is highly similar to the `SummarizedExperiment` class. 
+```{r dds to se}
+library(DESeq2)
+library(airway)
+data(airway)
+ddsSE <- DESeqDataSet(airway, design = ~ cell + dex)
+
+if (interactive()){
+  geyser(SummarizedExperiment(ddsSE), "DESeq Airway Example")
+}
+```
+
+# Related Tools
+
+The theme between these tools is that they do A LOT OF STUFF. `geyser` just does one thing - shows gene expression across your samples. Which, effectively, means less energy spent trying to figure out how to get started.
+
+  - [iSEE](https://bioconductor.org/packages/release/bioc/html/iSEE.html)
+  - [pcaExplorer](https://www.bioconductor.org/packages/release/bioc/html/pcaExplorer.html)
+  - [DEVis](https://cran.r-hub.io/web/packages/DEVis/vignettes/DEVis_vignette.html)
+  - [omicsViewer](https://bioconductor.org/packages/devel/bioc/vignettes/omicsViewer/inst/doc/quickStart.html#1_Introduction)
+  
 # Session Info
 ```{r}
 sessionInfo()

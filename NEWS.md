@@ -3,3 +3,5 @@
 * Added a `NEWS.md` file to track changes to the package.
 * Restructure ui.R/server.R to put the code directly into `geyser::geyser.R` to 
 better match bioconductor style
+* Better error handling for low value rows
+* Removed one "in app" guide as the info is in the vignette 

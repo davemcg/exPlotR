@@ -46,7 +46,7 @@
   }
 
   # pull gene counts and left_join with colData
-  pdata <- assay(get(rse_name),  input$slot)[genes, ,drop = FALSE] %>%
+  pdata <- assay(get(rse_name), input$slot)[genes, ,drop = FALSE] %>%
     data.frame() %>% 
     tibble::rownames_to_column('Gene') %>% 
     pivot_longer(-Gene, values_to = 'counts', names_to = 'sample_unique_id') %>%
@@ -82,7 +82,7 @@
   hm_data <- t(scale(t(pfdf[,pfdata$sample_unique_id %>% unique()])))
   # row clustering fails if there are zero count rows
   row_clustering <- input$row_clust
-  if (min(rowSums(hm_data)) == 0){
+  if (min(rowSums(hm_data) <= 1, na.rm = TRUE)){
     row_clustering <- FALSE
   }
   output$plot <- Heatmap(hm_data,

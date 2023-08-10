@@ -38,7 +38,7 @@ geyser <- function(rse,
                    primary_color = "#3A5836",
                    secondary_color = "#d5673e") {
   
-  addResourcePath('assets', system.file('vignettes', package='geyser'))
+  #addResourcePath('assets', system.file('vignettes', package='geyser'))
   
   ui <-  page_navbar(
     title = app_name,
@@ -124,7 +124,7 @@ geyser <- function(rse,
       title = "Info",
       align = "right",
       quick_start_ui(),
-      overview_ui(),
+      #overview_ui(),
       nav_item(tags$a("Code Source (external link)", 
                       href = "https://github.com/davemcg/geyser", 
                       target = "_blank"))
