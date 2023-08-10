@@ -25,12 +25,12 @@ quick_start_ui <- function(){
 library(recount3)
 library(geyser)
 library(dplyr)
-human_projects <- available_projects())
+human_projects <- available_projects()
 proj_info <- subset( 
-  human_projects 
+  human_projects,
   project == \"SRP107937\" & project_type == \"data_sources\" 
 )
-rse_SRP107937 <- create_rse(proj_info
+rse_SRP107937 <- create_rse(proj_info)
 assay(rse_SRP107937, \"counts\") <- transform_counts(rse_SRP107937)
 # first tweak that glues the gene name onto the gene id in the row names
 rownames(rse_SRP107937) <- paste0(rowData(rse_SRP107937)$gene_name, ' (', row.names(rse_SRP107937), ')')

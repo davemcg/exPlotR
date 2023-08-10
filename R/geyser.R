@@ -3,6 +3,7 @@
 #' @description Run shiny app to use SummarizedExperiment object to display genomics data
 #'
 #' @export
+#' 
 #' @import shiny
 #' @import SummarizedExperiment
 #' @import bslib
@@ -11,7 +12,6 @@
 #' @import ggbeeswarm 
 #' @import ComplexHeatmap
 #' @import htmltools
-#'
 #'
 #' @param rse SummarizedExperiment object
 #' @param app_name Title name that goes on the top left of the Shiny app
@@ -27,8 +27,9 @@
 #'
 #' @examples
 #'
-#' \dontrun{
-#' geyser(your_rse)
+#' if (interactive()){
+#'   load(system.file('extdata/tiny_rse.Rdata', package = 'geyser'))
+#'   geyser(tiny_rse)
 #' }
 #'
 
@@ -37,7 +38,7 @@ geyser <- function(rse,
                    primary_color = "#3A5836",
                    secondary_color = "#d5673e") {
   
-  addResourcePath('assets', system.file('assets', package='geyser'))
+  addResourcePath('assets', system.file('vignettes', package='geyser'))
   
   ui <-  page_navbar(
     title = app_name,
@@ -158,7 +159,7 @@ geyser <- function(rse,
     # expression plot ----
     # R/exp_plot.R
     exp_plot_reactive <- eventReactive(input$exp_plot_button, {
-      exp_plot(input, rse_name)
+      .exp_plot(input, rse_name)
     })
     output$exp_plot <- renderPlot({
       exp_plot_reactive()$plot},
@@ -168,7 +169,7 @@ geyser <- function(rse,
     # hm plot -----
     # R/heatmap.R
     hm_plot_reactive <- eventReactive(input$hm_plot_button, {
-      hm_plot(input, rse_name)
+      .hm_plot(input, rse_name)
     })
     output$hm_plot <- renderPlot({
       ComplexHeatmap::draw(hm_plot_reactive()$plot)},

@@ -29,8 +29,9 @@ fully available to make custom plot groupings.
 }
 \examples{
 
-\dontrun{
-geyser(your_rse)
+if (interactive()){
+  load(system.file('extdata/tiny_rse.Rdata', package = 'geyser'))
+  geyser(tiny_rse)
 }
 
 }

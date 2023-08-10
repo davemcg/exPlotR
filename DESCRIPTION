@@ -1,6 +1,6 @@
 Package: geyser
 Title: Gene Expression displaYer of SummerizedExperiment in R
-Version: 0.30.0
+Version: 0.99.0
 Authors@R: 
     person(given = "David",
            family = "McGaughey",
@@ -10,7 +10,7 @@ Authors@R:
 Description: Lightweight Gene Expression displaYer (plotter / viewer) of SummarizedExperiment object. This package provides a quick and easy that uses Shiny-based GUI to empower a user to use a SummarizedExperiment object and then view gene expression grouped from the sample metadata columns (in the `colData` slot). Gene expression can either be viewed with a box plot or a heatmap. 
 License: LICENSE
 LazyData: true
-biocViews: Software
+biocViews: Software, ShinyApps, GUI
 Imports:
   bslib (>= 0.5.0),
   ComplexHeatmap,
@@ -27,5 +27,10 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Suggests: 
+    knitr,
+    recount3,
+    rmarkdown,
+    stringr,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+VignetteBuilder: knitr

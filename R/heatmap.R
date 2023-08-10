@@ -22,13 +22,17 @@
 #' @author David McGaughey
 #'
 #' @examples
-#'
-#' \dontrun{
-#' exp_plot(input, rse_name, 'counts')
-#' }
-#'
+#' load(system.file('extdata/tiny_rse.Rdata', package = 'geyser'))
+#' input <- list()
+#' input$genes <- c("TYRP1 (ENSG00000107165.12)","OPN1LW (ENSG00000102076.9)")
+#' input$groupings <- c('disease')
+#' input$slot <- 'counts'
+#' input$expression_scale <- TRUE
+#' input$row_clust <- TRUE
+#' input$col_clust <- TRUE
+#' geyser:::.hm_plot(input, 'tiny_rse', 'counts')$plot
 
-hm_plot <- function(input, rse_name, slot){
+.hm_plot <- function(input, rse_name, slot){
   Gene <- rowid <- sample_unique_id <- counts <- group <- NULL
   genes <- input$genes
   groupings <- input$groupings
@@ -36,7 +40,7 @@ hm_plot <- function(input, rse_name, slot){
   if (length(genes) < 1 || length(groupings) < 1){
     showModal(modalDialog(title = "Heatmap Error",
                           "Have you specified at least one grouping and one gene?",
-                          easyClose = T,
+                          easyClose = TRUE,
                           footer = NULL))
     stop()
   }
