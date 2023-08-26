@@ -2,9 +2,8 @@
 title: "Gene Expression displaY of SummarizedExperiment in R"
 output: rmarkdown::html_vignette
 author: 
-  - David McGaughey
-   affiliation: 
-   - National Eye Institute, National Institutes of Health
+  - name: David McGaughey
+    affiliation: National Eye Institute, National Institutes of Health
 date: "`r Sys.Date() `"
 vignette: >
   %\VignetteIndexEntry{Gene_Expression_Plotting_GUI}

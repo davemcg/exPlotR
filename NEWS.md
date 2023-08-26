@@ -1,3 +1,11 @@
+# geyser 0.99.1
+
+* fixed bug in vignette yaml
+
+# geyser 0.99.0
+
+* submitted to Bioconductor
+
 # geyser 0.30.0
 
 * Added a `NEWS.md` file to track changes to the package.
