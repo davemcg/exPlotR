@@ -6,9 +6,11 @@
 #'
 #' @import SummarizedExperiment
 #' @import ggplot2
-#' @import ggbeeswarm
-#' @import dplyr
-#' @importFrom tidyr pivot_longer pivot_wider
+#' @importFrom ggbeeswarm geom_beeswarm
+#' @importFrom dplyr filter left_join mutate pull row_number 
+#' @importFrom magrittr "%>%"
+#' @importFrom tidyr all_of pivot_longer pivot_wider unite
+#' @importFrom tibble rownames_to_column
 #' 
 #' @param input From ui.R
 #' @param rse_name Name of the rse object
@@ -39,19 +41,19 @@
   if (length(genes) < 1 || length(groupings) < 1){
     showModal(modalDialog(title = "Box Plot Error",
                           "Have you specified at least one grouping and one gene?",
-                          easyClose = T,
+                          easyClose = TRUE,
                           footer = NULL))
     stop()
   }
 
   # pull gene counts and left_join with colData
-  pdata <- assay(get(rse_name),  input$slot)[genes, ,drop = FALSE] %>%
+  pdata <- assay(get(rse_name), input$slot)[genes, ,drop = FALSE] %>%
     data.frame() %>% 
-    tibble::rownames_to_column('Gene') %>% 
+    rownames_to_column('Gene') %>% 
     pivot_longer(-Gene, values_to = 'counts', names_to = 'sample_unique_id') %>%
     left_join(colData(get(rse_name)) %>%
                 data.frame() %>% 
-                tibble::rownames_to_column('sample_unique_id') %>% 
+                rownames_to_column('sample_unique_id') %>% 
                 mutate(rowid = row_number()),
               by = 'sample_unique_id')
   if (length(input$table_rows_selected)){
@@ -69,11 +71,11 @@
   output <- list()
   pfdata <- pfdata %>%
     # make custom column with user selected groupings of columns
-    tidyr::unite("group", tidyr::all_of(groupings), remove = FALSE, sep = " | ")
+    unite("group", all_of(groupings), remove = FALSE, sep = " | ")
   output$plot <- pfdata %>%
     ggplot(aes(x=group,y=counts)) +
     geom_boxplot() +
-    ggbeeswarm::geom_beeswarm() +
+    geom_beeswarm() +
     coord_flip() +
     xlab(paste0(groupings, collapse = ' | ')) +
     ylab(ylab_text) +

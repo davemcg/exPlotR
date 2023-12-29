@@ -5,10 +5,12 @@
 #' @keywords internal
 #'
 #' @import SummarizedExperiment
-#' @import ComplexHeatmap
-#' @import dplyr
-#' @import tibble
-#' @importFrom tidyr pivot_longer pivot_wider
+#' @importFrom ComplexHeatmap Heatmap
+#' @importFrom dplyr filter left_join mutate pull select row_number 
+#' @importFrom magrittr "%>%"
+#' @import tibble 
+#' @importFrom tidyselect all_of
+#' @importFrom tidyr pivot_longer pivot_wider unite
 #'
 #'
 #' @param input From ui.R
@@ -17,7 +19,7 @@
 #'
 #' @details
 #'
-#' Makes the box plot for the geyser Shiny app
+#' Makes the heatmap for the geyser Shiny app
 #'
 #' @author David McGaughey
 #'
@@ -48,11 +50,11 @@
   # pull gene counts and left_join with colData
   pdata <- assay(get(rse_name), input$slot)[genes, ,drop = FALSE] %>%
     data.frame() %>% 
-    tibble::rownames_to_column('Gene') %>% 
+    rownames_to_column('Gene') %>% 
     pivot_longer(-Gene, values_to = 'counts', names_to = 'sample_unique_id') %>%
     left_join(colData(get(rse_name)) %>%
                 data.frame() %>% 
-                tibble::rownames_to_column('sample_unique_id') %>% 
+                rownames_to_column('sample_unique_id') %>% 
                 mutate(rowid = row_number()),
               by = 'sample_unique_id')
   if (length(input$table_rows_selected)){
@@ -70,10 +72,10 @@
   output <- list()
   pfdata <- pfdata %>%
     # make custom column with user selected groupings of columns
-    tidyr::unite("group", all_of(groupings), remove = FALSE, sep = " | ")
+    unite("group", all_of(groupings), remove = FALSE, sep = " | ")
   # make df for ComplexHeatmap
   pfdf <- pfdata %>%
-    dplyr::select(Gene, sample_unique_id, counts) %>%
+    select(Gene, sample_unique_id, counts) %>%
     pivot_wider(names_from = sample_unique_id, values_from = counts) 
   col_labels <- colnames(pfdf)[-1] # yank out col names before data.frame conversion to preserve special characters
   pfdf <- data.frame(pfdf)

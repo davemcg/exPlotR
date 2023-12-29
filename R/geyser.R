@@ -4,15 +4,15 @@
 #'
 #' @export
 #' 
-#' @import shiny
-#' @import SummarizedExperiment
 #' @import bslib
-#' @import dplyr
-#' @import ggplot2
-#' @import ggbeeswarm 
-#' @import ComplexHeatmap
+#' @importFrom dplyr any_of select pull row_number
+#' @importFrom ComplexHeatmap draw
 #' @import htmltools
-#'
+#' @import SummarizedExperiment
+#' @importFrom magrittr "%>%"
+#' @importFrom tibble rownames_to_column
+#' @import shiny
+#' 
 #' @param rse SummarizedExperiment object
 #' @param app_name Title name that goes on the top left of the Shiny app
 #' @param primary_color The title bar color
@@ -40,7 +40,7 @@ geyser <- function(rse,
   
   #addResourcePath('assets', system.file('vignettes', package='geyser'))
   
-  ui <-  page_navbar(
+  ui <- page_navbar(
     title = app_name,
     theme = theme_ui(primary_color = primary_color, 
                      secondary_color = secondary_color),
@@ -172,7 +172,7 @@ geyser <- function(rse,
       .hm_plot(input, rse_name)
     })
     output$hm_plot <- renderPlot({
-      ComplexHeatmap::draw(hm_plot_reactive()$plot)},
+      draw(hm_plot_reactive()$plot)},
       height = eventReactive(input$hm_plot_button,
                              {max(400, 0.7 * hm_plot_reactive()$grouping_length)})
     )
@@ -182,7 +182,7 @@ geyser <- function(rse,
       colData(get(rse_name)) %>%
         data.frame() %>% 
         rownames_to_column('rse_sample_id') %>% 
-        dplyr::select('rse_sample_id', dplyr::any_of(input$groupings)) %>%
+        select('rse_sample_id', any_of(input$groupings)) %>%
         DT::datatable(rownames= FALSE,
                       options = list(autoWidth = TRUE,
                                      pageLength = 15,
@@ -201,7 +201,7 @@ geyser <- function(rse,
     output$table_full <- DT::renderDataTable(
       colData(get(rse_name)) %>%
         data.frame() %>% 
-        tibble::rownames_to_column('rse_sample_id') %>% 
+        rownames_to_column('rse_sample_id') %>% 
         DT::datatable(rownames= FALSE,
                       options = list(autoWidth = TRUE,
                                      pageLength = 25),
