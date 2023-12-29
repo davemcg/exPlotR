@@ -17,7 +17,7 @@
 draws the expression heatmap
 }
 \details{
-Makes the box plot for the geyser Shiny app
+Makes the heatmap for the geyser Shiny app
 }
 \examples{
 load(system.file('extdata/tiny_rse.Rdata', package = 'geyser'))

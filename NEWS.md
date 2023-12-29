@@ -1,3 +1,14 @@
+# geyser 0.99.2
+
+* addressing https://github.com/Bioconductor/Contributions/issues/3107 - Thanks 
+* replaced T/F with TRUE/FALSE
+* fixed bug in vignette example (removed unnecessary `SummarizedExperiment` call) - Thanks @federicomarini
+* added inst/extdata/make_tiny_rse.R which reproduces the `tiny_rse` example data
+* changed vignette style to BiocStyle::html_document  
+* updated DESCRIPTION with urls
+* reduce full import of outside packages
+* Expanded unit testing suite for the box plot and heatmap generating functions
+
 # geyser 0.99.1
 
 * fixed bug in vignette yaml

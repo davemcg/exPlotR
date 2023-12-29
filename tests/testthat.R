@@ -8,5 +8,4 @@
 
 library(testthat)
 library(geyser)
-
 test_check("geyser")
