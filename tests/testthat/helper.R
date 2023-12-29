@@ -1,0 +1,1 @@
+load(system.file('extdata/tiny_rse.Rdata', package = 'geyser'))
