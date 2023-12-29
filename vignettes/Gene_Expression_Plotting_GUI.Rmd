@@ -1,6 +1,6 @@
 ---
 title: "Gene Expression displaY of SummarizedExperiment in R"
-output: rmarkdown::html_vignette
+output: BiocStyle::html_document
 author: 
   - name: David McGaughey
     affiliation: National Eye Institute, National Institutes of Health
@@ -18,13 +18,16 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Background
+
+Several tools exist to display gene expression data in a click-and-plot system - most notably [iSEE](https://bioconductor.org/packages/release/bioc/html/iSEE.html). More packages are listed in [Related Tools]. Geyser is unique from iSEE and others in that it does not do much (aside from showing expression data). The advantage of not doing much is that the number of dials and options is substantially reduced and it is, I hope, very simple to operate.
+
 # Install
 Commented out for now as it is not on Bioconductor
 ```{r install, eval = FALSE}
-# if (!requireNamespace("BiocManager", quietly=TRUE))
-#     install.packages("BiocManager")
-# BiocManager::install("geyser")
-
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("geyser")
 ```
 
 # Development Version
@@ -52,21 +55,21 @@ if (interactive()){
 
 # Screenshots of some core views
 
-The Shiny-based GUI first shows you the metadata (`colData` slot) of the SummarizedExperiment (SE) object.
+The Shiny-based GUI first shows you the metadata (`colData` slot) of the SummarizedExperiment (SE) object in a reactive `DT` data table.
 
-The idea is that this helps you ID which are the relevant fields to plot against.
+The idea is that this helps you ID which are the relevant fields to plot against (tissue and disease).
 
 <p align="center">
 <img src="help_01.png" style="width:600px;"/>
 </p>
 
-You can then head to the Plotting section and start typing in those fields (tissue and disease)
+You can then click over to the Plotting section of the app and start typing in those fields (tissue and disease) in the "Sample Grouping(s)" box. The text will auto-complete as you type.
 
 <p align="center">
 <img src="help_02.png" style="width:600px;"/>
 </p>
 
-After that you can type in the genes you are interested in.
+After that you can type in the genes you are interested in. Again, the genes will auto-complete as you type.
 
 <p align="center">
 <img src="help_03.png" style="width:600px;"/>
@@ -78,9 +81,10 @@ When you click the orange "Draw Box Plot" button the plot will be made
 <img src="help_04.png" style="width:600px;"/>
 </p>
 
-You can *custom filter* which samples are shown by clicking on the "Up arrow"
-next to "Sample Filtering" and then selecting the samples you want to display. 
-Here we select only the normal samples and then use the Heatmap visualization.
+You can *custom filter* which samples are shown by clicking on the "triangle"
+next to "Sample Filtering" and then selecting the samples you *want* to display. 
+Here we select only the normal samples and then use the Heatmap visualization (you can swap
+between Box Plot and Heatmap by clicking between the tabs).
 
 <p align="center">
 <img src="help_05.png" style="width:400px;"/>
@@ -96,6 +100,7 @@ If you want to reset the custom sample filtering, just click the "Clear Rows" bu
 <img src="help_07.png" style="width:400px;"/>
 </p>
 
+The plots can be "outputted" by either right-clicking or by
 
 # How to use [recount3](https://rna.recount.bio) to display a pre-processed dataset
 
@@ -154,7 +159,7 @@ data(airway)
 ddsSE <- DESeqDataSet(airway, design = ~ cell + dex)
 
 if (interactive()){
-  geyser(SummarizedExperiment(ddsSE), "DESeq Airway Example")
+  geyser(ddsSE, "DESeq Airway Example")
 }
 ```
 
