@@ -8,6 +8,7 @@
 * updated DESCRIPTION with urls
 * reduce full import of outside packages
 * Expanded unit testing suite for the box plot and heatmap generating functions
+* lightly refactored the internal .exp_plot and .hm_plot functions to stop weird errors with testthat unit testing
 
 # geyser 0.99.1
 

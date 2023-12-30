@@ -4,12 +4,12 @@
 \alias{.exp_plot}
 \title{exp_plot}
 \usage{
-.exp_plot(input, rse_name, slot)
+.exp_plot(input, rse, slot)
 }
 \arguments{
 \item{input}{From ui.R}
 
-\item{rse_name}{Name of the rse object}
+\item{rse}{The rse object}
 
 \item{slot}{which slot to pull the count data from the rse assay}
 }
@@ -27,7 +27,7 @@ input$genes <- c("TYRP1 (ENSG00000107165.12)","OPN1LW (ENSG00000102076.9)")
 input$groupings <- c('disease')
 input$slot <- 'counts'
 input$expression_scale <- TRUE
-geyser:::.exp_plot(input, 'tiny_rse', 'counts')$plot
+geyser:::.exp_plot(input, tiny_rse, 'counts')$plot
 }
 \author{
 David McGaughey

@@ -13,7 +13,7 @@
 #' @importFrom tibble rownames_to_column
 #' 
 #' @param input From ui.R
-#' @param rse_name Name of the rse object
+#' @param rse The rse object
 #' @param slot which slot to pull the count data from the rse assay
 #'
 #' @details
@@ -30,9 +30,9 @@
 #' input$groupings <- c('disease')
 #' input$slot <- 'counts'
 #' input$expression_scale <- TRUE
-#' geyser:::.exp_plot(input, 'tiny_rse', 'counts')$plot
+#' geyser:::.exp_plot(input, tiny_rse, 'counts')$plot
 
-.exp_plot <- function(input, rse_name, slot){
+.exp_plot <- function(input, rse, slot){
   Gene <- rowid <- group <- counts <- NULL
   
   genes <- input$genes
@@ -47,11 +47,11 @@
   }
 
   # pull gene counts and left_join with colData
-  pdata <- assay(get(rse_name), input$slot)[genes, ,drop = FALSE] %>%
+  pdata <- assay((rse), input$slot)[genes, ,drop = FALSE] %>%
     data.frame() %>% 
     rownames_to_column('Gene') %>% 
     pivot_longer(-Gene, values_to = 'counts', names_to = 'sample_unique_id') %>%
-    left_join(colData(get(rse_name)) %>%
+    left_join(colData((rse)) %>%
                 data.frame() %>% 
                 rownames_to_column('sample_unique_id') %>% 
                 mutate(rowid = row_number()),

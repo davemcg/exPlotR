@@ -159,7 +159,7 @@ geyser <- function(rse,
     # expression plot ----
     # R/exp_plot.R
     exp_plot_reactive <- eventReactive(input$exp_plot_button, {
-      .exp_plot(input, rse_name)
+      .exp_plot(input, get(rse_name))
     })
     output$exp_plot <- renderPlot({
       exp_plot_reactive()$plot},
@@ -169,7 +169,7 @@ geyser <- function(rse,
     # hm plot -----
     # R/heatmap.R
     hm_plot_reactive <- eventReactive(input$hm_plot_button, {
-      .hm_plot(input, rse_name)
+      .hm_plot(input, get(rse_name))
     })
     output$hm_plot <- renderPlot({
       draw(hm_plot_reactive()$plot)},

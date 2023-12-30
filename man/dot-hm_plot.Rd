@@ -4,12 +4,12 @@
 \alias{.hm_plot}
 \title{hm_plot}
 \usage{
-.hm_plot(input, rse_name, slot)
+.hm_plot(input, rse, slot)
 }
 \arguments{
 \item{input}{From ui.R}
 
-\item{rse_name}{Name of the rse object}
+\item{rse}{rse object}
 
 \item{slot}{which slot to pull the count data from the rse assay}
 }
@@ -28,7 +28,7 @@ input$slot <- 'counts'
 input$expression_scale <- TRUE
 input$row_clust <- TRUE
 input$col_clust <- TRUE
-geyser:::.hm_plot(input, 'tiny_rse', 'counts')$plot
+geyser:::.hm_plot(input, tiny_rse, 'counts')$plot
 }
 \author{
 David McGaughey
