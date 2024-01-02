@@ -192,7 +192,7 @@ geyser <- function(rse,
     )
     ## proxy to clear row selection -----
     ## https://yihui.shinyapps.io/DT-proxy/
-    proxy = DT::dataTableProxy('table')
+    proxy <- DT::dataTableProxy('table')
     observeEvent(input$clear_colData_row_selections, {
       proxy %>% DT::selectRows(NULL)
     })
