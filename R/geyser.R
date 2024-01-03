@@ -37,9 +37,6 @@ geyser <- function(rse,
                    app_name = "geyser",
                    primary_color = "#3A5836",
                    secondary_color = "#d5673e") {
-  
-  #addResourcePath('assets', system.file('vignettes', package='geyser'))
-  
   ui <- page_navbar(
     title = app_name,
     theme = theme_ui(primary_color = primary_color, 
@@ -66,17 +63,19 @@ geyser <- function(rse,
         layout_sidebar(
           height = '100%',
           sidebar = sidebar(
+            title = 'Plot Parameters',
+            open = TRUE,
             accordion(
               multiple = TRUE,
               accordion_panel(
-                "Plot Parameters",
+                "Grouping and Features",
                 selectizeInput("groupings",
                                "Sample Grouping(s):",
                                choices = NULL,
                                multiple = TRUE,
                 ),
                 selectizeInput("genes",
-                               "Gene(s): ",
+                               "Assay Feature(s): ",
                                choices = NULL,
                                multiple = TRUE),
                 selectizeInput("slot",
@@ -131,8 +130,6 @@ geyser <- function(rse,
     )
   )
   
-  
-  
   # this argument yanked via the R/geyser.R function
   rse_name <- deparse(substitute(rse))
   
@@ -164,7 +161,7 @@ geyser <- function(rse,
     output$exp_plot <- renderPlot({
       exp_plot_reactive()$plot},
       height = eventReactive(input$exp_plot_button,
-                             {max(600, 20 * length(input$genes) * exp_plot_reactive()$grouping_length)})
+                             {max(600, 30 * length(input$genes) * exp_plot_reactive()$grouping_length)})
     )
     # hm plot -----
     # R/heatmap.R

@@ -1,3 +1,9 @@
+# geyser 0.99.3
+
+* updated bslib requirement to >= 0.6.0
+* replaced a "=" with "->"
+* fixed empty comma error in the Shiny UI
+
 # geyser 0.99.2
 
 * addressing https://github.com/Bioconductor/Contributions/issues/3107 - Thanks 
