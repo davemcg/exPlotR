@@ -3,6 +3,7 @@
 * updated bslib requirement to >= 0.6.0
 * replaced a "=" with "->"
 * fixed empty comma error in the Shiny UI
+* tweak wording and plot size in the plotting view
 
 # geyser 0.99.2
 
