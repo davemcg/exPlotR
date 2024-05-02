@@ -83,6 +83,11 @@ geyser <- function(rse,
                                choices = NULL,
                                multiple = FALSE
                 ),
+                selectizeInput("color_by",
+                               "Color by:",
+                               choices = NULL,
+                               multiple = FALSE
+                ),
                 layout_column_wrap(width = 0.5, 
                                    checkboxInput("expression_scale", 
                                                  label = 'log2(expression)', 
@@ -152,6 +157,12 @@ geyser <- function(rse,
                          selected = if ('counts' %in% 
                                         names(assays(get(rse_name)))){'counts'} 
                          else {names(assays(get(rse_name)))[1]},
+                         server = TRUE)
+    # select color by (columns of colData) ----
+    updateSelectizeInput(session, 'color_by',
+                         choices = colData(get(rse_name)) %>% 
+                           colnames(),
+                         selected = '',
                          server = TRUE)
     # expression plot ----
     # R/exp_plot.R

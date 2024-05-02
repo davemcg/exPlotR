@@ -1,3 +1,9 @@
+# geyser 0.99.4
+
+* xlab text matches slot selected
+* factor order respected for (SINGLE) sample grouping in plot
+* optional color for a single column 
+
 # geyser 0.99.3
 
 * updated bslib requirement to >= 0.6.0
