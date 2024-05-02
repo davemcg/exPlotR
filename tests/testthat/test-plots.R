@@ -8,6 +8,7 @@ test_that("Exp Plot is generated without error", {
   input$groupings <- c('disease')
   input$slot <- 'counts'
   input$expression_scale <- TRUE
+  input$color_by <- 'tissue'
   plot <- geyser:::.exp_plot(input, tiny_rse, 'counts')$plot
   expect_s3_class(plot, 'gg')
 })

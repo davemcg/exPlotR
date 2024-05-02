@@ -37,7 +37,7 @@ rownames(rse_SRP107937) <- paste0(rowData(rse_SRP107937)$gene_name, ' (', row.na
 # creates two new metadata fields 
 colData(rse_SRP107937)$tissue <- colData(rse_SRP107937)$sra.sample_title %>% stringr::str_extract(.,'PRC|PR')
 colData(rse_SRP107937)$disease <- colData(rse_SRP107937)$sra.sample_title %>% stringr::str_extract(.,'AMD|Normal')
-geyser(rse_SRP107937, \" geyser: SRP107937\")"), br(),
+geyser(rse_SRP107937, \" geyser: SRP107937\")"), br()
             #           tags$iframe(width="800",
             #                       height="506",
             #                       src="https://rawcdn.githack.com/davemcg/geyser/5e89c4ac27e786eb80ec1baa0bf0ab1f90fb6f01/inst/assets/geyser_example.mp4", frameborder="0", allow="accelerometer; autoplay; gyroscope; picture-in-picture"))

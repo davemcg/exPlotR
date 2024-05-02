@@ -27,6 +27,7 @@ input$genes <- c("TYRP1 (ENSG00000107165.12)","OPN1LW (ENSG00000102076.9)")
 input$groupings <- c('disease')
 input$slot <- 'counts'
 input$expression_scale <- TRUE
+input$color_by <- 'tissue'
 geyser:::.exp_plot(input, tiny_rse, 'counts')$plot
 }
 \author{

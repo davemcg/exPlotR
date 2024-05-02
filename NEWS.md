@@ -1,3 +1,16 @@
+# geyser 0.99.4
+
+* xlab text matches slot selected
+* factor order respected for (SINGLE) sample grouping in plot
+* optional color for a single column 
+
+# geyser 0.99.3
+
+* updated bslib requirement to >= 0.6.0
+* replaced a "=" with "->"
+* fixed empty comma error in the Shiny UI
+* tweak wording and plot size in the plotting view
+
 # geyser 0.99.2
 
 * addressing https://github.com/Bioconductor/Contributions/issues/3107 - Thanks 
