@@ -70,9 +70,14 @@
     lab_text <- "scale(c)"
   }
   output <- list()
-  pfdata <- pfdata %>%
-    # make custom column with user selected groupings of columns
-    unite("group", all_of(groupings), remove = FALSE, sep = " | ")
+  # if only one grouping given then just column as is to retain potential factor
+  if (length(groupings) == 1){
+    pfdata$group <- pfdata[,groupings] %>% pull(1)
+  } else {
+    pfdata <- pfdata %>%
+      # make custom column with user selected groupings of columns
+      unite("group", all_of(groupings), remove = FALSE, sep = " | ")
+  }
   # make df for ComplexHeatmap
   pfdf <- pfdata %>%
     select(Gene, sample_unique_id, counts) %>%
@@ -94,6 +99,6 @@
                          cluster_columns = input$col_clust,
                          cluster_rows = row_clustering,
                          name = lab_text)
-  output$grouping_length <- nrow(pfdata) + (nchar(pfdata$group) %>% max()) + (nchar(pfdf) %>% max())
+  output$grouping_length <- nrow(pfdata) + (nchar(as.character(pfdata$group)) %>% max()) + (nchar(pfdf) %>% max())
   output
 }

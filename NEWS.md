@@ -1,3 +1,7 @@
+# geyser 0.99.5
+
+* factor order respected in heatmap also (previously was just the dot plot)
+
 # geyser 0.99.4
 
 * xlab text matches slot selected
