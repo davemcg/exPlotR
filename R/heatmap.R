@@ -12,7 +12,7 @@
 #' @importFrom tidyselect all_of
 #' @importFrom tidyr pivot_longer pivot_wider unite
 #'
-#'
+#' 
 #' @param input From ui.R
 #' @param rse rse object
 #' @param slot which slot to pull the count data from the rse assay
@@ -23,6 +23,10 @@
 #'
 #' @author David McGaughey
 #'
+#' @returns 
+#' 
+#' Returns a ComplexHeatmap object
+#' 
 #' @examples
 #' load(system.file('extdata/tiny_rse.Rdata', package = 'geyser'))
 #' input <- list()

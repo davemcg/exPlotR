@@ -13,6 +13,10 @@
 
 \item{slot}{which slot to pull the count data from the rse assay}
 }
+\value{
+Returns a list with the $plot slot holding ggplot object and $grouping_length contains
+the number of features to scale the plot
+}
 \description{
 draws the expression box plot
 }

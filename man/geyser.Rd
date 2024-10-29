@@ -20,6 +20,9 @@ geyser(
 
 \item{secondary_color}{The plot action button color}
 }
+\value{
+Shiny app
+}
 \description{
 Run shiny app to use SummarizedExperiment object to display genomics data
 }
