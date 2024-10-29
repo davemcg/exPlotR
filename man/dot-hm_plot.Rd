@@ -13,6 +13,9 @@
 
 \item{slot}{which slot to pull the count data from the rse assay}
 }
+\value{
+Returns a ComplexHeatmap object
+}
 \description{
 draws the expression heatmap
 }

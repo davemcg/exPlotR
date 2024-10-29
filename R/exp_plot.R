@@ -22,6 +22,11 @@
 #'
 #' @author David McGaughey
 #'
+#' @returns 
+#' 
+#' Returns a list with the $plot slot holding ggplot object and $grouping_length contains
+#' the number of features to scale the plot
+#' 
 #' @examples
 #'
 #' load(system.file('extdata/tiny_rse.Rdata', package = 'geyser'))
@@ -72,17 +77,17 @@
   output <- list()
   # if only one grouping given then just column as is to retain potential factor
   if (length(groupings) == 1){
-    pfdata$group <- pfdata[,groupings] %>% pull(1)
+    pfdata$geyser_group <- pfdata[,groupings] %>% pull(1)
   } else {
     pfdata <- pfdata %>%
       # make custom column with user selected groupings of columns
-      unite("group", all_of(groupings), remove = FALSE, sep = " | ")
+      unite("geyser_group", all_of(groupings), remove = FALSE, sep = " | ")
   }
   
   if (input$color_by != ''){
     pfdata$geyser_color_by <- pfdata[,input$color_by] %>% pull(1)
     output$plot <- pfdata %>%
-      ggplot(aes(x=group,y=counts, color = geyser_color_by)) +
+      ggplot(aes(x=geyser_group,y=counts, color = geyser_color_by, group = geyser_group)) +
       geom_boxplot() +
       geom_beeswarm(dodge.width = 0.75) +
       coord_flip() +
@@ -93,7 +98,7 @@
       guides(col= guide_legend(title= input$color_by))
   } else {
     output$plot <- pfdata %>%
-      ggplot(aes(x=group,y=counts)) +
+      ggplot(aes(x=geyser_group,y=counts, group = geyser_group)) +
       geom_boxplot() +
       geom_beeswarm() +
       coord_flip() +
@@ -102,6 +107,6 @@
       theme_linedraw(base_size = 16) +
       facet_wrap(~Gene, ncol = 1)
   }
-  output$grouping_length <- pfdata$group %>% unique() %>% length()
+  output$grouping_length <- pfdata$geyser_group %>% unique() %>% length()
   output
 }

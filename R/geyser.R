@@ -25,6 +25,10 @@
 #'
 #' @author David McGaughey
 #'
+#' @returns 
+#' 
+#' Shiny app
+#' 
 #' @examples
 #'
 #' if (interactive()){
