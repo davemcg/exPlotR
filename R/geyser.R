@@ -78,8 +78,12 @@ geyser <- function(rse,
                                choices = NULL,
                                multiple = TRUE,
                 ),
-                selectizeInput("genes",
-                               "Assay Feature(s): ",
+                selectizeInput("feature_col",
+                               "Assay Feature: ",
+                               choices = NULL,
+                               multiple = FALSE),
+                selectizeInput('features',
+                               "Features:",
                                choices = NULL,
                                multiple = TRUE),
                 selectizeInput("slot",
@@ -143,17 +147,58 @@ geyser <- function(rse,
   rse_name <- deparse(substitute(rse))
   
   server <- function(input, output, session) {
+    # error checking for input rse -----
+    if ((colnames(get(rse_name)) %>% grep("^\\d", .) %>% length()) > 0){
+      showModal(modalDialog(title = "Column name error!",
+                            "R hates column names that begin with a digit!
+                            Close this app and edit the SummarizedExperiment object
+                            `colnames` to not begin with numbers please.",
+                            easyClose = FALSE,
+                            footer = NULL))
+    }
     # select sample columns to group on -----
     updateSelectizeInput(session, 'groupings',
                          choices = colnames(colData(get(rse_name))) %>% 
                            sort(),
-                         selected = '',
+                         selected = 'row names',
                          server = TRUE)
-    # select genes ----
-    updateSelectizeInput(session, 'genes',
-                         choices = rownames(get(rse_name)) %>% sort(),
-                         selected = '',
+    # feature selection -------
+    # conditional logic to pick a rowData column for feature/row selection
+    # if rowData has zero columns, then just use the row.names
+    # of the object
+    updateSelectizeInput(session, 'feature_col',
+                         label = 'Assay Feature: ',
+                         choices = c("row names", colnames(rowData(get(rse_name)))),
+                         selected = 'row names',
                          server = TRUE)
+    observeEvent(input$feature_col, {
+      #output$selected_feature_choices <- renderUI({
+      if (req(input$feature_col) == 'row names'){
+        updateSelectizeInput(session,
+                             'features', 
+                             label = "Features:",
+                             choices = row.names(get(rse_name)), 
+                             selected = NULL, 
+                             #options = list(maxItems = 100),
+                             server = TRUE)
+      } else {
+        the_col <- input$feature_col
+        updateSelectizeInput(session,
+                             'features', 
+                             label = "Features:",
+                             choices = rowData(get(rse_name))[,the_col],
+                             selected = NULL, 
+                             #options = list(maxItems = 100),
+                             server = TRUE)
+      }
+      #})
+    })
+    
+    # # select genes ----
+    # updateSelectizeInput(session, 'genes',
+    #                      choices = rownames(get(rse_name)) %>% sort(),
+    #                      selected = '',
+    #                      server = TRUE)
     # select assay slot (usually counts) ----
     updateSelectizeInput(session, 'slot',
                          choices = assays(get(rse_name)) %>% 
@@ -176,7 +221,7 @@ geyser <- function(rse,
     output$exp_plot <- renderPlot({
       exp_plot_reactive()$plot},
       height = eventReactive(input$exp_plot_button,
-                             {max(600, 30 * length(input$genes) * exp_plot_reactive()$grouping_length)})
+                             {max(600, 30 * length(input$selected_feature_choices) * exp_plot_reactive()$grouping_length)})
     )
     # hm plot -----
     # R/heatmap.R

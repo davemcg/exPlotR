@@ -31,7 +31,8 @@
 #'
 #' load(system.file('extdata/tiny_rse.Rdata', package = 'geyser'))
 #' input <- list()
-#' input$genes <- c("TYRP1 (ENSG00000107165.12)","OPN1LW (ENSG00000102076.9)")
+#' input$feature_col <- "row names"
+#' input$features <- c("TYRP1 (ENSG00000107165.12)","OPN1LW (ENSG00000102076.9)")
 #' input$groupings <- c('disease')
 #' input$slot <- 'counts'
 #' input$expression_scale <- TRUE
@@ -39,24 +40,30 @@
 #' geyser:::.exp_plot(input, tiny_rse, 'counts')$plot
 
 .exp_plot <- function(input, rse, slot){
-  Gene <- rowid <- group <- counts <- geyser_color_by <- NULL
+  user_selected_feature <- rowid <- group <- counts <- geyser_group <- geyser_color_by <- NULL
   
-  genes <- input$genes
+  #cat(input$feature)
+  features <- input$features
   groupings <- input$groupings
   
-  if (length(genes) < 1 || length(groupings) < 1){
+  if (length(features) < 1 || length(groupings) < 1){
     showModal(modalDialog(title = "Box Plot Error",
-                          "Have you specified at least one grouping and one gene?",
+                          "Have you specified at least one grouping and one feature?",
                           easyClose = TRUE,
                           footer = NULL))
     stop()
   }
-  
-  # pull gene counts and left_join with colData
-  pdata <- assay((rse), input$slot)[genes, ,drop = FALSE] %>%
+
+  # pull feature counts and left_join with colData
+  if (input$feature_col == 'row names'){
+    feature_logical <- features
+  } else {
+    feature_logical <- rowData(rse)[,input$feature_col] %in% features
+  }
+  pdata <- assay((rse), input$slot)[feature_logical, ,drop = FALSE] %>%
     data.frame() %>% 
-    rownames_to_column('Gene') %>% 
-    pivot_longer(-Gene, values_to = 'counts', names_to = 'sample_unique_id') %>%
+    rownames_to_column('user_selected_feature') %>% 
+    pivot_longer(-user_selected_feature, values_to = 'counts', names_to = 'sample_unique_id') %>%
     left_join(colData((rse)) %>%
                 data.frame() %>% 
                 rownames_to_column('sample_unique_id') %>% 
@@ -94,7 +101,7 @@
       xlab(paste0(groupings, collapse = ' | ')) +
       ylab(ylab_text) +
       theme_linedraw(base_size = 16) +
-      facet_wrap(~Gene, ncol = 1) +
+      facet_wrap(~user_selected_feature, ncol = 1) +
       guides(col= guide_legend(title= input$color_by))
   } else {
     output$plot <- pfdata %>%
@@ -105,7 +112,7 @@
       xlab(paste0(groupings, collapse = ' | ')) +
       ylab(ylab_text) +
       theme_linedraw(base_size = 16) +
-      facet_wrap(~Gene, ncol = 1)
+      facet_wrap(~user_selected_feature, ncol = 1)
   }
   output$grouping_length <- pfdata$geyser_group %>% unique() %>% length()
   output

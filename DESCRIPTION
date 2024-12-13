@@ -1,13 +1,13 @@
 Package: geyser
 Title: Gene Expression displaYer of SummarizedExperiment in R
-Version: 0.99.6
+Version: 0.99.7
 Authors@R: 
     person(given = "David",
            family = "McGaughey",
            role = c("aut", "cre"),
            email = "mcgaughey@gmail.com",
            comment=c(ORCID="0000-0002-9224-2888"))
-Description: Lightweight Gene Expression displaYer (plotter / viewer) of SummarizedExperiment object in R. This package provides a quick and easy Shiny-based GUI to empower a user to use a SummarizedExperiment object to view gene expression grouped from the sample metadata columns (in the `colData` slot). Gene expression can either be viewed with a box plot or a heatmap. 
+Description: Lightweight Expression displaYer (plotter / viewer) of SummarizedExperiment object in R. This package provides a quick and easy Shiny-based GUI to empower a user to use a SummarizedExperiment object to view  (gene) expression grouped from the sample metadata columns (in the `colData` slot). Feature expression can either be viewed with a box plot or a heatmap. 
 License: CC0
 LazyData: false
 biocViews: Software, ShinyApps, GUI, GeneExpression

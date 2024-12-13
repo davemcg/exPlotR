@@ -11,6 +11,7 @@
 #' @import tibble 
 #' @importFrom tidyselect all_of
 #' @importFrom tidyr pivot_longer pivot_wider unite
+#' @importFrom utils head
 #'
 #' 
 #' @param input From ui.R
@@ -30,7 +31,8 @@
 #' @examples
 #' load(system.file('extdata/tiny_rse.Rdata', package = 'geyser'))
 #' input <- list()
-#' input$genes <- c("TYRP1 (ENSG00000107165.12)","OPN1LW (ENSG00000102076.9)")
+#' input$feature_col <- 'row names'
+#' input$features <- c("TYRP1 (ENSG00000107165.12)","OPN1LW (ENSG00000102076.9)")
 #' input$groupings <- c('disease')
 #' input$slot <- 'counts'
 #' input$expression_scale <- TRUE
@@ -39,23 +41,28 @@
 #' geyser:::.hm_plot(input, tiny_rse, 'counts')$plot
 
 .hm_plot <- function(input, rse, slot){
-  Gene <- rowid <- sample_unique_id <- counts <- group <- NULL
-  genes <- input$genes
+  user_selected_feature <- rowid <- sample_unique_id <- counts <- group <- NULL
+  features <- input$features
   groupings <- input$groupings
 
-  if (length(genes) < 1 || length(groupings) < 1){
+  if (length(features) < 1 || length(groupings) < 1){
     showModal(modalDialog(title = "Heatmap Error",
-                          "Have you specified at least one grouping and one gene?",
+                          "Have you specified at least one grouping and one feature?",
                           easyClose = TRUE,
                           footer = NULL))
     stop()
   }
 
-  # pull gene counts and left_join with colData
-  pdata <- assay((rse), input$slot)[genes, ,drop = FALSE] %>%
+  # pull feature counts and left_join with colData
+  if (input$feature_col == 'row names'){
+    feature_logical <- features
+  } else {
+    feature_logical <- rowData(rse)[,input$feature_col] %in% features
+  }
+  pdata <- assay((rse), input$slot)[feature_logical, ,drop = FALSE] %>%
     data.frame() %>% 
-    rownames_to_column('Gene') %>% 
-    pivot_longer(-Gene, values_to = 'counts', names_to = 'sample_unique_id') %>%
+    rownames_to_column('user_selected_feature') %>% 
+    pivot_longer(-user_selected_feature, values_to = 'counts', names_to = 'sample_unique_id') %>%
     left_join(colData((rse)) %>%
                 data.frame() %>% 
                 rownames_to_column('sample_unique_id') %>% 
@@ -84,11 +91,11 @@
   }
   # make df for ComplexHeatmap
   pfdf <- pfdata %>%
-    select(Gene, sample_unique_id, counts) %>%
+    select(user_selected_feature, sample_unique_id, counts) %>%
     pivot_wider(names_from = sample_unique_id, values_from = counts) 
   col_labels <- colnames(pfdf)[-1] # yank out col names before data.frame conversion to preserve special characters
   pfdf <- data.frame(pfdf)
-  row.names(pfdf) <- pfdf$Gene
+  row.names(pfdf) <- pfdf$user_selected_feature
   pfdf <- pfdf[,-1]
   hm_data <- t(scale(t(pfdf[,pfdata$sample_unique_id %>% unique()])))
   # row clustering fails if there are zero count rows
@@ -97,7 +104,7 @@
     row_clustering <- FALSE
   }
   output$plot <- Heatmap(hm_data,
-                         column_split = pfdata %>% filter(Gene == genes[1]) %>% pull(group),
+                         column_split = pfdata %>%  pull(group) %>% head(ncol(hm_data)),
                          column_title_rot = 90,
                          column_labels = col_labels,
                          cluster_columns = input$col_clust,

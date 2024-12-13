@@ -1,3 +1,12 @@
+# geyser 0.99.7
+
+* User can now select features (rows) from the `rowData` slot. 
+Previously was only using the row.names of the `SummarizedExperiment` object
+
+# geyser 0.99.6
+
+* Make some internal column names more unique, change license to CC0
+
 # geyser 0.99.5
 
 * factor order respected in heatmap also (previously was just the dot plot)
