@@ -1,3 +1,7 @@
+# geyser 0.99.8
+
+Add BiocStyles to import (failed on "nebbiolo1" automated build testing)
+
 # geyser 0.99.7
 
 * User can now select features (rows) from the `rowData` slot. 

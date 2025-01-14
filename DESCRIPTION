@@ -1,6 +1,6 @@
 Package: geyser
 Title: Gene Expression displaYer of SummarizedExperiment in R
-Version: 0.99.7
+Version: 0.99.8
 Authors@R: 
     person(given = "David",
            family = "McGaughey",
@@ -13,6 +13,7 @@ LazyData: false
 biocViews: Software, ShinyApps, GUI, GeneExpression
 Imports:
   bslib (>= 0.6.0),
+  BiocStyle,
   ComplexHeatmap,
   dplyr,
   DT,
